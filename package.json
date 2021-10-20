@@ -1,0 +1,22 @@
+{
+  "name": "cosmos-feed",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.ts",
+  "scripts": {
+    "start": "ts-node ./main.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Derori",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.23.0",
+    "feed": "^4.2.2",
+    "moment": "^2.29.1",
+    "ts-node": "^10.3.0",
+    "typescript": "^4.4.4"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.1"
+  }
+}
