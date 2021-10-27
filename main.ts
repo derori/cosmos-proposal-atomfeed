@@ -14,9 +14,9 @@ const feed = new Feed({
 const fetchProposals = (async () => {
     const url = 'https://api.cosmostation.io/v1/gov/proposals';
     const { data } = await axios.get(url);
-    const ooo: GovProposalResponse[] = data as GovProposalResponse[];
+    let ooo: GovProposalResponse[] = data as GovProposalResponse[];
 
-    ooo.sort((a, b) => {
+    ooo = ooo.sort((a, b) => {
         return (a.proposal_id > b.proposal_id) ? -1 : 1;
     });
 
@@ -32,7 +32,7 @@ const fetchProposals = (async () => {
 
         // console.dir(`proposal_id:${oo.proposal_id}, date:${oo.voting_end_time}`);
     }
-
+    //    console.dir(ooo);
 
     interface GovProposalResponse {
         proposal_id: string,
