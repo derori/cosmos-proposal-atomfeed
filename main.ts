@@ -26,7 +26,6 @@ const fetchProposals = (async () => {
             title: `VotingEnd: ${moment(oo.voting_end_time).toISOString()} **${oo.title}`,
             link: `https://www.mintscan.io/cosmos/proposals/${oo.proposal_id}`,
             date: moment(oo.submit_time).toDate(),
-            description: oo.description,
             id: oo.tx_hash,
         });
 
