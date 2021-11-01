@@ -5,13 +5,13 @@ import moment from 'moment';
 
 
 
-const feed = new Feed({
-    title: "Cosmos Proposal",
-    id: "Cosmos proposals feed via cosmostaion public api.",
-    copyright: "Cosmos gov",
-});
 
 const fetchProposals = (async () => {
+    const feed = new Feed({
+        title: "Cosmos Proposal",
+        id: "Cosmos proposals feed via cosmostaion public api.",
+        copyright: "Cosmos gov",
+    });
     const url = 'https://api.cosmostation.io/v1/gov/proposals';
     const { data } = await axios.get(url);
     let ooo: GovProposalResponse[] = data as GovProposalResponse[];
@@ -20,7 +20,7 @@ const fetchProposals = (async () => {
         return (a.proposal_id > b.proposal_id) ? -1 : 1;
     });
 
-    for (const oo of ooo) {
+    for await (const oo of ooo) {
         if (!oo.proposal_id) continue;
         feed.addItem({
             title: `VotingEnd: ${moment(oo.voting_end_time).toISOString()} **${oo.title}`,
@@ -31,6 +31,7 @@ const fetchProposals = (async () => {
 
         // console.dir(`proposal_id:${oo.proposal_id}, date:${oo.voting_end_time}`);
     }
+    return feed;
     //    console.dir(ooo);
 
     interface GovProposalResponse {
@@ -49,7 +50,7 @@ const fetchProposals = (async () => {
     }
 });
 const server = http.createServer(async (req: IncomingMessage, res: ServerResponse) => {
-    await fetchProposals();
+    const feed = await fetchProposals();
     res.writeHead(200, { 'Content-Type': 'application/atom+xml' });
     res.end(feed.atom1());
 })
