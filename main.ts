@@ -1,19 +1,16 @@
 import http, { IncomingMessage, ServerResponse } from 'http'
 import axios from 'axios';
 import { Feed } from 'feed';
-import moment from 'moment';
 
-
-
+const propsEndpoint = 'https://api.cosmoscan.net/proposals';
 
 const fetchProposals = (async () => {
     const feed = new Feed({
         title: "Cosmos Proposal",
-        id: "Cosmos proposals feed via cosmostaion public api.",
+        id: "Cosmos proposals feed via cosmoscan api.",
         copyright: "Cosmos gov",
     });
-    const url = 'https://api.cosmoscan.net/proposals';
-    const { data } = await axios.get(url);
+    const { data } = await axios.get(propsEndpoint);
     let ooo: GovProposalResponse[] = data as GovProposalResponse[];
 
     ooo = ooo.sort((a, b) => {
