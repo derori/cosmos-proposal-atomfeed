@@ -23,9 +23,9 @@ const fetchProposals = (async () => {
     for await (const oo of ooo) {
         if (!oo.id) continue;
         feed.addItem({
-            title: `VotingEnd: ${moment(oo.voting_end_time).toISOString()} **${oo.title}`,
+            title: `VotingEnd: ${new Date(Number(oo.voting_end_time) * 1000).toISOString()} **${oo.title}`,
             link: `https://www.mintscan.io/cosmos/proposals/${oo.id}`,
-            date: moment(Number(oo.submit_time) * 1000).toDate(),
+            date: new Date(Number(oo.submit_time) * 1000),
             id: oo.tx_hash,
         });
 
