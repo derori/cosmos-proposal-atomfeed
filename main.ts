@@ -2,7 +2,7 @@ import http, { IncomingMessage, ServerResponse } from 'http'
 import axios from 'axios';
 import { Feed } from 'feed';
 
-const propsEndpoint = 'https://api.cosmoscan.net/proposals';
+const propsEndpoint = 'https://lcd-osmosis.keplr.app/cosmos/gov/v1beta1/proposals?proposal_status=0&pagination.limit=10&pagination.offset=0&pagination.reverse=true';
 
 const fetchProposals = (async () => {
     const feed = new Feed({
@@ -11,26 +11,40 @@ const fetchProposals = (async () => {
         copyright: "Cosmos gov",
     });
     const { data } = await axios.get(propsEndpoint);
-    let ooo: GovProposalResponse[] = data as GovProposalResponse[];
-
+    let ooo: KeplrGovProposalResponse[] = await data.proposals as KeplrGovProposalResponse[];
+    console.dir(ooo);
     ooo = ooo.sort((a, b) => {
-        return (a.id > b.id) ? -1 : 1;
+        return (a.proposal_id > b.proposal_id) ? -1 : 1;
     });
 
     for await (const oo of ooo) {
-        if (!oo.id) continue;
+        if (!oo.proposal_id) continue;
+        console.dir(oo.voting_end_time);
         feed.addItem({
-            title: `VotingEnd: ${new Date(Number(oo.voting_end_time) * 1000).toISOString()} **${oo.title}`,
-            link: `https://www.mintscan.io/cosmos/proposals/${oo.id}`,
-            date: new Date(Number(oo.submit_time) * 1000),
-            id: oo.tx_hash,
+            title: `VotingEnd: ${new Date(oo.voting_end_time).toISOString()} **${oo.content.title}`,
+            link: `https://www.mintscan.io/cosmos/proposals/${oo.proposal_id}`,
+            date: new Date(oo.submit_time),
+            id: oo.proposal_id,
         });
-
-        // console.dir(`proposal_id:${oo.proposal_id}, date:${oo.voting_end_time}`);
     }
     return feed;
-    //    console.dir(ooo);
 
+    interface KeplrGovProposalResponse {
+        content: {
+            '@type': string,
+            description: string,
+            title: string
+        },
+        deposit_end_time: Date,
+        final_tally_result: {},
+        is_expedited: boolean,
+        proposal_id: string,
+        status: string,
+        submit_time: string,
+        total_deposit: {},
+        voting_end_time: string,
+        voting_start_time: Date
+    }
     interface GovProposalResponse {
         id: string,
         tx_hash: string,
@@ -62,3 +76,8 @@ const server = http.createServer(async (req: IncomingMessage, res: ServerRespons
 })
 
 server.listen(4000) // 4000番ポートで起動
+
+
+// const feed = fetchProposals().then((f) => {
+//     f.atom1();
+// });
