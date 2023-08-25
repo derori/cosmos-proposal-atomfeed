@@ -1,0 +1,43 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: cosmos-testnet-proposal-atomfeed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cosmos-testnet-proposal-atomfeed
+  template:
+    metadata:
+      labels:
+        app: cosmos-testnet-proposal-atomfeed
+    spec:
+      containers:
+      - args:
+        image: derorisan/cosmos-testnet-proposal-atomfeed
+        imagePullPolicy: Always
+        name: cosmos-testnet-proposal-atomfeed
+        ports:
+        - containerPort: 4000
+          protocol: TCP
+        env:
+        - name: PROPS_ENDPOINT
+          value: https://cosmos-testnet-api.nodes.mresearch.xyz/cosmos/gov/v1beta1/proposals?proposal_status=0&pagination.limit=10&pagination.offset=0&pagination.reverse=true
+        - name: LINK_BASE_URL
+          value: https://testnet.mintscan.io/cosmoshub-testnet/proposals/
+        - name: CHAIN_NAME
+          value: COSMOS theta-testnet-001
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: cosmos-testnet-proposal-atomfeed
+spec:
+  ports:
+  - name: "http-port"
+    protocol: TCP
+    port: 80
+    targetPort: 4000
+  selector:
+    app: cosmos-testnet-proposal-atomfeed
+---

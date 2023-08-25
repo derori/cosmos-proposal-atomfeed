@@ -2,34 +2,33 @@ import http, { IncomingMessage, ServerResponse } from 'http'
 import axios from 'axios';
 import { Feed } from 'feed';
 
-const propsEndpoint = 'https://lcd-osmosis.keplr.app/cosmos/gov/v1beta1/proposals?proposal_status=0&pagination.limit=10&pagination.offset=0&pagination.reverse=true';
+const propsEndpoint = process.env.PROPS_ENDPOINT || '';
+const chainName = process.env.CHAIN_NAME || 'Undefined as dotenv';
+const locationBaseUrl = process.env.LINK_BASE_URL;
 
 const fetchProposals = (async () => {
     const feed = new Feed({
-        title: "Cosmos Proposal",
-        id: "Cosmos proposals feed via cosmoscan api.",
-        copyright: "Cosmos gov",
+        title: `${chainName} Proposals`,
+        id: `${chainName} proposals feed via mynode api.`,
+        copyright: `${chainName} gov`,
     });
     const { data } = await axios.get(propsEndpoint);
-    let ooo: KeplrGovProposalResponse[] = await data.proposals as KeplrGovProposalResponse[];
-    console.dir(ooo);
-    ooo = ooo.sort((a, b) => {
-        return (a.proposal_id > b.proposal_id) ? -1 : 1;
-    });
+    let ooo: GovProposalResponse[] = await data.proposals as GovProposalResponse[];
 
     for await (const oo of ooo) {
         if (!oo.proposal_id) continue;
         console.dir(oo.voting_end_time);
         feed.addItem({
             title: `VotingEnd: ${new Date(oo.voting_end_time).toISOString()} **${oo.content.title}`,
-            link: `https://www.mintscan.io/cosmos/proposals/${oo.proposal_id}`,
+            link: `${locationBaseUrl}${oo.proposal_id}`,
             date: new Date(oo.submit_time),
             id: oo.proposal_id,
         });
     }
+
     return feed;
 
-    interface KeplrGovProposalResponse {
+    interface GovProposalResponse {
         content: {
             '@type': string,
             description: string,
@@ -44,29 +43,6 @@ const fetchProposals = (async () => {
         total_deposit: {},
         voting_end_time: string,
         voting_start_time: Date
-    }
-    interface GovProposalResponse {
-        id: string,
-        tx_hash: string,
-        type: string,
-        proposer: string,
-        proposer_address: string,
-        title: string,
-        description: string,
-        status: string,
-        votes_yes: string,
-        votes_abstain: string,
-        votes_no: string,
-        votes_no_with_veto: string,
-        submit_time: Date,
-        deposit_end_time: Date,
-        total_deposits: string,
-        voting_start_time: Date,
-        voting_end_time: Date,
-        voters: number,
-        participation_rate: string,
-        turnout: string,
-        activity: boolean
     }
 });
 const server = http.createServer(async (req: IncomingMessage, res: ServerResponse) => {
