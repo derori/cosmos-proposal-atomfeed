@@ -22,9 +22,9 @@ spec:
           protocol: TCP
         env:
         - name: PROPS_ENDPOINT
-          value: https://cosmos-testnet-api.nodes.mresearch.xyz/cosmos/gov/v1beta1/proposals?proposal_status=0&pagination.limit=10&pagination.offset=0&pagination.reverse=true
+          value: https://cosmos-testnet-api.nodes.mresearch.xyz/cosmos/gov/v1/proposals?pagination.limit=10&pagination.offset=0&pagination.reverse=true
         - name: LINK_BASE_URL
-          value: https://testnet.mintscan.io/cosmoshub-testnet/proposals/
+          value: https://www.mintscan.io/cosmos-testnet/proposals/
         - name: CHAIN_NAME
           value: COSMOS theta-testnet-001
 ---

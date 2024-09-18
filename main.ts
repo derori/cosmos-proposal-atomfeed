@@ -16,28 +16,25 @@ const fetchProposals = (async () => {
     let ooo: GovProposalResponse[] = await data.proposals as GovProposalResponse[];
 
     for await (const oo of ooo) {
-        if (!oo.proposal_id) continue;
+        if (!oo.id) continue;
         console.dir(oo.voting_end_time);
         feed.addItem({
-            title: `VotingEnd: ${new Date(oo.voting_end_time).toISOString()} **${oo.content.title}`,
-            link: `${locationBaseUrl}${oo.proposal_id}`,
+            title: `VotingEnd: ${new Date(oo.voting_end_time).toISOString()} **${oo.title}`,
+            link: `${locationBaseUrl}${oo.id}`,
             date: new Date(oo.submit_time),
-            id: oo.proposal_id,
+            id: oo.id,
         });
     }
 
     return feed;
 
     interface GovProposalResponse {
-        content: {
-            '@type': string,
-            description: string,
-            title: string
-        },
+        title: string,
+        summary: string,
         deposit_end_time: Date,
         final_tally_result: {},
         is_expedited: boolean,
-        proposal_id: string,
+        id: string,
         status: string,
         submit_time: string,
         total_deposit: {},
@@ -51,7 +48,7 @@ const server = http.createServer(async (req: IncomingMessage, res: ServerRespons
     res.end(feed.atom1());
 })
 
-server.listen(4000) // 4000番ポートで起動
+server.listen(4000); // 4000番ポートで起動
 
 
 // const feed = fetchProposals().then((f) => {
