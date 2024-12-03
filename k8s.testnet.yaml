@@ -22,11 +22,11 @@ spec:
           protocol: TCP
         env:
         - name: PROPS_ENDPOINT
-          value: https://cosmos-testnet-api.nodes.mresearch.xyz/cosmos/gov/v1/proposals?pagination.limit=10&pagination.offset=0&pagination.reverse=true
+          value: https://cosmos-testnet-provider-api.nodes.mresearch.xyz/cosmos/gov/v1/proposals?pagination.limit=10&pagination.offset=0&pagination.reverse=true
         - name: LINK_BASE_URL
-          value: https://www.mintscan.io/cosmos-testnet/proposals/
+          value: https://www.mintscan.io/ics-testnet-provider/proposals/
         - name: CHAIN_NAME
-          value: COSMOS theta-testnet-001
+          value: COSMOS provider
 ---
 kind: Service
 apiVersion: v1
