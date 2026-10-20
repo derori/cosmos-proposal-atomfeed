@@ -9,7 +9,9 @@ const locationBaseUrl = process.env.LINK_BASE_URL;
 const fetchProposals = (async () => {
     const feed = new Feed({
         title: `${chainName} Proposals`,
-        id: `${chainName} proposals feed via mynode api.`,
+	link: ``,
+	date: null,
+	id: `${chainName} proposals feed via mynode api.`,
         copyright: `${chainName} gov`,
     });
     const { data } = await axios.get(propsEndpoint);
@@ -17,12 +19,11 @@ const fetchProposals = (async () => {
 
     for await (const oo of ooo) {
         if (!oo.id) continue;
-        console.dir(oo.voting_end_time);
-        feed.addItem({
+	feed.addItem({
             title: `VotingEnd: ${new Date(oo.voting_end_time).toISOString()} **${oo.title}`,
             link: `${locationBaseUrl}${oo.id}`,
             date: new Date(oo.submit_time),
-            id: oo.id,
+            id: `${locationBaseUrl}${oo.id}`,
         });
     }
 
@@ -48,9 +49,13 @@ const server = http.createServer(async (req: IncomingMessage, res: ServerRespons
     res.end(feed.atom1());
 })
 
-server.listen(4000); // 4000番ポートで起動
+
+const port = 4000;
+server.listen(port, () => {
+  console.log(`サーバーが http://localhost:${port}/ で実行中`);
+});
 
 
-// const feed = fetchProposals().then((f) => {
-//     f.atom1();
-// });
+const feed = fetchProposals().then((f) => {
+    f.atom1();
+});

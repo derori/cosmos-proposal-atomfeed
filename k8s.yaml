@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - args:
-        image: derorisan/cosmos-proposal-atomfeed
+        image: docker.io/derorisan/cosmos-proposal-atomfeed
         imagePullPolicy: Always
         name: cosmos-proposal-atomfeed
         ports:
